@@ -13,74 +13,6 @@ function toggleMobileMenu() {
   icon.classList.toggle("fa-times");
 }
 
-//cards for different products
-// async function getCategory() {
-//   const url = "https://dummyjson.com/products/categories";
-
-//   try {
-//     const response = await fetch(url);
-
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
-//     const data = await response.json();
-//     console.log("fetched data", data);
-//     const container = document.getElementById("ProductCategory");
-//     let cardsHTML = "";
-//     data.forEach((product) => {
-//       const categorySlug = product.slug || product.name || product;
-//       const categoryName = product.name || product;
-//       cardsHTML += `
-//     <div class="ProductCategorychildren">
-//     <div class="ProductCategorychildren" onclick="getData('${categorySlug}')" style="cursor: pointer;">
-//       <h3>${product.name}</h3>
-   
-//     </div>
-//   `;
-//     });
-//     container.innerHTML = cardsHTML;
-//   } catch (error) {
-//     console.error("Fetch operation failed:", error.message);
-//   }
-// }
-// getCategory();
-
-// async function getData(category) {
-//   // const url = "https://dummyjson.com/products";
-//   const url = `https://dummyjson.com/products/category/${encodeURIComponent(category)}`;
-
-//   try {
-//     const response = await fetch(url);
-
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
-//     const data = await response.json();
-//     console.log("fetched data", data);
-//     const container = document.getElementById("products-container");
-//     let cardsHTML = "";
-//     data.products.forEach((product) => {
-//       cardsHTML += `
-//     <div class="productCard">
-//       <h2>${product.title}</h2>
-//       <p>${product.description}</p>
-//       <h3>Category: ${product.category}</h3>
-//       <h3>Price: $${product.price}</h3>
-//       <h3>Stock: ${product.stock}</h3>
-//       <h4 >Tag: #${product.tags}</h4>
-//        <img id="myImage" src="${product.images}" width="300" height="200" alt="Slider Image">
-
-//     </div>
-//   `;
-//     });
-//     container.innerHTML = cardsHTML;
-//   } catch (error) {
-//     console.error("Fetch operation failed:", error.message);
-//   }
-// }
-// getData();
-
-// Cards for categories
 async function getCategory() {
   const url = "https://dummyjson.com/products/categories";
 
@@ -123,6 +55,68 @@ async function getCategory() {
 }
 
 getCategory();
+async function SLiderFunction() {
+  const container = document.getElementById("Slider");
+  const url = "https://dummyjson.com/products";
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    let activeSlide = 0;
+
+    function showSlide() {
+      const product = data.products[activeSlide];
+
+      container.innerHTML = `
+                <div class="SliderCard">
+
+                    <h2>${product.title}</h2>
+
+                    <p>${product.description}</p>
+
+                    <h3>Price: $${product.price}</h3>
+
+                    <img 
+                        src="${product.thumbnail}" 
+                        alt="${product.title}" 
+                        width="200" 
+                        height="200"
+                        style="object-fit: cover; border-radius: 6px; "
+                    >
+
+                    <p>Total Stock Remaining: ${product.stock}</p>
+
+                </div>
+            `;
+    }
+
+    // Show first product
+    showSlide();
+
+    // Automatically change product every 3 seconds
+    setInterval(() => {
+      activeSlide++;
+
+      // If we reach the last product,
+      // go back to the first product
+      if (activeSlide >= data.products.length) {
+        activeSlide = 0;
+      }
+
+      showSlide();
+    }, 3000);
+  } catch (error) {
+    console.error("Slider fetch failed:", error.message);
+  }
+}
+
+// SLiderFunction();
 
 
 async function getData(category) {
@@ -169,6 +163,3 @@ async function getData(category) {
 
 
 
-async function introduction() {
-  
-}

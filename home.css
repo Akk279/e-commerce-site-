@@ -20,6 +20,10 @@ h1{
             padding:20px 40px;
             gap: 10px;
         }
+
+.SliderCard{
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
 #ProductCategory{
     padding-block: 40px;
     padding-inline: 40px;
