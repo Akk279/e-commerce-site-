@@ -1,0 +1,35 @@
+.intro{
+    background-color: black;
+}
+ * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+h1{
+ text-align: center;
+}
+      #products-container{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      }
+       .productCard{
+        display: flex;
+    flex-direction: column;
+            border: 1px solid black;
+            padding:20px 40px;
+            gap: 10px;
+        }
+#ProductCategory{
+    padding-block: 40px;
+    padding-inline: 40px;
+display: flex;
+gap: 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+    justify-content: space-evenly;
+    align-items: center;
+}
+      
+      
