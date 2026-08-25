@@ -1,3 +1,17 @@
+window.addEventListener("scroll", () => {
+  // 1. Get how far the user has scrolled down from the top or current poition
+  const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+
+  // 2. Calculate total scrollable height (Full height minus viewport height)  or total length
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+  // 3. Prevent division by zero if the page isn't scrollable 
+  const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+
+  // 4. Update the CSS width of the progress element
+  document.getElementById("myProgressBar").style.width = scrolled + "%";
+});
+
 function toggleMobileMenu() {
   var drawer = document.getElementById("mobileDrawer");
   if (!drawer) return;
@@ -80,7 +94,7 @@ async function SLiderFunction() {
                     <p>${product.description}</p>
 
                     <h3>Price: $${product.price}</h3>
-
+                     
                     <img 
                         src="${product.thumbnail}" 
                         alt="${product.title}" 
@@ -88,7 +102,7 @@ async function SLiderFunction() {
                         height="200"
                         style="object-fit: cover; border-radius: 6px; "
                     >
-
+                     
                     <p>Total Stock Remaining: ${product.stock}</p>
 
                 </div>
@@ -152,12 +166,16 @@ let currentProducts = [];
 function renderProducts() {
   const container = document.getElementById("products-container");
 
-  container.innerHTML = currentProducts.map( (product) => `
+  container.innerHTML = currentProducts
+    .map(
+      (product) => `
           <div class="productCard">
           <h2>${product.title}</h2>
           <p>${product.description}</p>
           <h3>Price: $${product.price}</h3>
+           <div class= "sliderImage"> 
           <img src="${product.thumbnail}" alt="${product.title}" width="200" height="200" style="object-fit: cover; border-radius: 6px;">
+          </div>
           <p>Total Stock Remaining: ${product.stock}</p>
         </div>
       `,
