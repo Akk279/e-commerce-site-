@@ -48,7 +48,6 @@ async function getCategory() {
       const firstSlug = data[0].slug || data[0].name || data[0];
       getData(firstSlug);
     }
-
   } catch (error) {
     console.error("Fetch operation failed:", error.message);
   }
@@ -56,7 +55,7 @@ async function getCategory() {
 
 getCategory();
 async function SLiderFunction() {
-  const container = document.getElementById("Slider");
+  const container1 = document.getElementById("Slider");
   const url = "https://dummyjson.com/products";
 
   try {
@@ -73,7 +72,7 @@ async function SLiderFunction() {
     function showSlide() {
       const product = data.products[activeSlide];
 
-      container.innerHTML = `
+      container1.innerHTML = `
                 <div class="SliderCard">
 
                     <h2>${product.title}</h2>
@@ -116,8 +115,7 @@ async function SLiderFunction() {
   }
 }
 
-// SLiderFunction();
-
+SLiderFunction();
 
 async function getData(category) {
   const container = document.getElementById("products-container");
@@ -133,33 +131,48 @@ async function getData(category) {
     }
 
     const data = await response.json();
-    console.log(`Fetched products for ${category}:`, data.products);
+    currentProducts = data.products;
+    console.log(`Fetched products for ${category}:`, currentProducts);
 
     // Render the category's products
-    if (data.products.length === 0) {
+    if (currentProducts.length === 0) {
       container.innerHTML = "<p>No products found in this category.</p>";
       return;
     }
 
-    let productsHTML = "";
-    data.products.forEach((product) => {
-      productsHTML += `
-        <div class="productCard">
-          <h2>${product.title}</h2>
-          <p>${product.description}</p>
-          <h3>Price: $${product.price}</h3>
-          <img src="${product.thumbnail}" alt="${product.title}" width="200" height="200" style="object-fit: cover; border-radius: 6px;">
-        <p>Total Stock Remaining: ${product.stock}</p>
-        </div>
-      `;
-    });
-
-    container.innerHTML = productsHTML;
+    renderProducts();
   } catch (error) {
     console.error("Fetch operation failed:", error.message);
     container.innerHTML = `<p>Error loading products: ${error.message}</p>`;
   }
 }
 
+let currentProducts = [];
 
+function renderProducts() {
+  const container = document.getElementById("products-container");
 
+  container.innerHTML = currentProducts.map( (product) => `
+          <div class="productCard">
+          <h2>${product.title}</h2>
+          <p>${product.description}</p>
+          <h3>Price: $${product.price}</h3>
+          <img src="${product.thumbnail}" alt="${product.title}" width="200" height="200" style="object-fit: cover; border-radius: 6px;">
+          <p>Total Stock Remaining: ${product.stock}</p>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function sortNumbers(order) {
+  if (order === "asc") {
+    currentProducts.sort((a, b) => a.price - b.price);
+  }
+
+  if (order === "desc") {
+    currentProducts.sort((a, b) => b.price - a.price);
+  }
+
+  renderProducts();
+}
