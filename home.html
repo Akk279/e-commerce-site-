@@ -4,14 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>E-Commerce</title>
+    <script
+      src="https://kit.fontawesome.com/YOUR_KIT_CODE.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <link rel="stylesheet" href="common.css" />
     <link rel="stylesheet" href="home.css" />
     <script src="product.js" defer></script>
   </head>
   <body>
     <div class="progress-container">
-  <div class="progress-bar" id="myProgressBar"></div>
-</div>
+      <div class="progress-bar" id="myProgressBar"></div>
+    </div>
 
     <div class="main">
       <div class="intro">
@@ -81,15 +89,43 @@
 
       <h1 id="lowerH1">THIS IS THE PRODUCT DETAIL</h1>
       <div id="Slider"></div>
-    <div id="sort-controls">
-    <button id="sorterA" onclick="sortNumbers('asc', document.getElementById('products-container'))">
-        Sort ascending
-    </button>
+      <div class="top-menu">
+        <div id="sort-controls">
+          <button
+            id="sorterA"
+            onclick="
+              sortNumbers('asc', document.getElementById('products-container'))
+            "
+          >
+            Sort ascending
+          </button>
 
-    <button id="sorterD" onclick="sortNumbers('desc', document.getElementById('products-container'))">
-        Sort descending
-    </button>
-</div>
+          <button
+            id="sorterD"
+            onclick="
+              sortNumbers('desc', document.getElementById('products-container'))
+            "
+          >
+            Sort descending
+          </button>
+        </div>
+
+        <div class="searchbar">
+          <input
+            id="searchbar"
+            type="text"
+            name=""
+            placeholder="Search items"
+          />
+          <button id="search-button" onclick="search_item('search')">
+            <i class="fas fa-search"> </i>
+          </button>
+          <button id="cancel-button" onclick="search_item('cancel')" hidden>
+            <i class="fas fa-times"> </i>
+          </button>
+        </div>
+      </div>
+      <div id="search-data" class="search-data"></div>
       <div id="products-container"></div>
 
       <footer class="site-footer">

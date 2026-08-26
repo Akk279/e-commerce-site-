@@ -1,11 +1,14 @@
 window.addEventListener("scroll", () => {
   // 1. Get how far the user has scrolled down from the top or current poition
-  const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+  const winScroll =
+    document.documentElement.scrollTop || document.body.scrollTop;
 
   // 2. Calculate total scrollable height (Full height minus viewport height)  or total length
-  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const height =
+    document.documentElement.scrollHeight -
+    document.documentElement.clientHeight;
 
-  // 3. Prevent division by zero if the page isn't scrollable 
+  // 3. Prevent division by zero if the page isn't scrollable
   const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
 
   // 4. Update the CSS width of the progress element
@@ -193,4 +196,73 @@ function sortNumbers(order) {
   }
 
   renderProducts();
+}
+async function search_item(order1) {
+ 
+  const box1 = document.getElementById("products-container");
+  const box2 = document.getElementById("search-data");
+  const searchButton = document.getElementById("search-button");
+  const cancelButton = document.getElementById("cancel-button");
+
+  if (order1 === "cancel") {
+    box1.style.visibility = "visible";
+    box2.style.visibility = "hidden";
+    searchButton.hidden = false;
+    cancelButton.hidden = true;
+  }
+  if (order1 === "search") {
+    box1.style.visibility = "hidden";
+    box2.style.visibility = "visible";
+    searchButton.hidden = true;
+    cancelButton.hidden = false;
+    const searchContainer = document.getElementById("search-data");
+    
+    const url = "https://dummyjson.com/products";
+    
+     let input = document.getElementById("searchbar").value;
+    input = input.toLowerCase();
+
+    console.log(input);
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+     
+     const data = await response.json();
+      console.log("fetched categories:", data);
+      const regex = new RegExp(input, "i");
+   
+      console.log("just abobve search producd");
+
+      let searchProducts = data.products.filter(
+        (product) =>
+          regex.test(product.title) || regex.test(product.description)
+      );
+console.log(" below searchProducts" );
+
+      console.log(searchProducts);
+        const container = document.getElementById("search-data");
+
+        container.innerHTML = searchProducts
+          .map(
+            (product) => `
+          <div class="productCard">
+          <h2>${product.title}</h2>
+          <p>${product.description}</p>
+          <h3>Price: $${product.price}</h3>
+           <div class= "sliderImage"> 
+          <img src="${product.thumbnail}" alt="${product.title}" width="200" height="200" style="object-fit: cover; border-radius: 6px;">
+          </div>
+          <p>Total Stock Remaining: ${product.stock}</p>
+        </div>
+      `,
+          )
+          .join("");
+     
+    } catch (error) {
+      console.error("Fetch operation failed:", error.message);
+    }
+  }
 }
