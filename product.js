@@ -106,7 +106,7 @@ async function getCategory() {
     console.log("fetched categories:", data);
 
     const container = document.getElementById("ProductCategory");
-    let cardsHTML = `<div class="ProductCategorychildren" onclick="setActiveCategory(this); ShowAll()" style="cursor: pointer;">
+    let cardsHTML = `<div class="ProductCategorychildren" onclick="ShowAll()" style="cursor: pointer;">
           <h3>Show All</h3>
       </div>`;
 
@@ -116,13 +116,14 @@ async function getCategory() {
 
       // Fixed: Single clean div with the onclick handler
       cardsHTML += `
-        <div class="ProductCategorychildren" onclick="setActiveCategory(this); getData('${categorySlug}')" style="cursor: pointer;">
+        <div class="ProductCategorychildren" onclick="getData('${categorySlug}')" style="cursor: pointer;">
           <h3>${categoryName}</h3>
         </div>
       `;
     });
 
     container.innerHTML = cardsHTML;
+
     // Optional: Load the first category automatically on initial page load
     if (data.length > 0) {
       ShowAll();
@@ -173,18 +174,13 @@ if (window.innerWidth > 1080) {
 else {
    productsPerPage = 6;
 }
-
 function renderProducts() {
-  const container = document.getElementById("products-container");
-  const start = (currentPageNumber - 1) * productsPerPage;
-  console.log("start " + start);
+   const start = (currentPageNumber - 1) * productsPerPage;
    const visibleProducts = currentProducts.slice(
      start,
      start + productsPerPage,
   );
-
- 
-   container.innerHTML = visibleProducts.map(
+   document.getElementById("products-container").innerHTML = visibleProducts.map(
        (product) => `
           <div class="productCard">
           <h2>${product.title}</h2>
@@ -197,8 +193,7 @@ function renderProducts() {
         </div>
       `,
      )
-    .join("");
-  
+     .join("");
 
   pagination();
 }
