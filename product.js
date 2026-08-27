@@ -29,48 +29,6 @@ function toggleMobileMenu() {
   icon.classList.toggle("fa-bars");
   icon.classList.toggle("fa-times");
 }
-
-async function getCategory() {
-  const url = "https://dummyjson.com/products/categories";
-
-  try {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("fetched categories:", data);
-
-    const container = document.getElementById("ProductCategory");
-    let cardsHTML = "";
-
-    data.forEach((product) => {
-      const categorySlug = product.slug || product.name || product;
-      const categoryName = product.name || product;
-
-      // Fixed: Single clean div with the onclick handler
-      cardsHTML += `
-        <div class="ProductCategorychildren" onclick="getData('${categorySlug}')" style="cursor: pointer;">
-          <h3>${categoryName}</h3>
-        </div>
-      `;
-    });
-
-    container.innerHTML = cardsHTML;
-
-    // Optional: Load the first category automatically on initial page load
-    if (data.length > 0) {
-      const firstSlug = data[0].slug || data[0].name || data[0];
-      getData(firstSlug);
-    }
-  } catch (error) {
-    console.error("Fetch operation failed:", error.message);
-  }
-}
-
-getCategory();
 async function SLiderFunction() {
   const container1 = document.getElementById("Slider");
   const url = "https://dummyjson.com/products";
@@ -134,6 +92,49 @@ async function SLiderFunction() {
 
 SLiderFunction();
 
+async function getCategory() {
+  const url = "https://dummyjson.com/products/categories";
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("fetched categories:", data);
+
+    const container = document.getElementById("ProductCategory");
+    let cardsHTML = `<div class="ProductCategorychildren" onclick="ShowAll()" style="cursor: pointer;">
+          <h3>Show All</h3>
+      </div>`;
+
+    data.forEach((product) => {
+      const categorySlug = product.slug || product.name || product;
+      const categoryName = product.name || product;
+
+      // Fixed: Single clean div with the onclick handler
+      cardsHTML += `
+        <div class="ProductCategorychildren" onclick="getData('${categorySlug}')" style="cursor: pointer;">
+          <h3>${categoryName}</h3>
+        </div>
+      `;
+    });
+
+    container.innerHTML = cardsHTML;
+
+    // Optional: Load the first category automatically on initial page load
+    if (data.length > 0) {
+      ShowAll();
+    }
+  } catch (error) {
+    console.error("Fetch operation failed:", error.message);
+  }
+}
+
+getCategory();
+
 async function getData(category) {
   const container = document.getElementById("products-container");
   container.innerHTML = "<p>Loading products...</p>";
@@ -165,13 +166,18 @@ async function getData(category) {
 }
 
 let currentProducts = [];
-
+let currentPageNumber = 1;
+const productsPerPage = 9;
 function renderProducts() {
   const container = document.getElementById("products-container");
-
-  container.innerHTML = currentProducts
-    .map(
-      (product) => `
+   const start = (currentPageNumber - 1) * productsPerPage;
+   const visibleProducts = currentProducts.slice(
+     start,
+     start + productsPerPage,
+  );
+   document.getElementById("products-container").innerHTML = visibleProducts
+     .map(
+       (product) => `
           <div class="productCard">
           <h2>${product.title}</h2>
           <p>${product.description}</p>
@@ -182,8 +188,10 @@ function renderProducts() {
           <p>Total Stock Remaining: ${product.stock}</p>
         </div>
       `,
-    )
-    .join("");
+     )
+     .join("");
+
+  pagination();
 }
 
 function sortNumbers(order) {
@@ -197,29 +205,46 @@ function sortNumbers(order) {
 
   renderProducts();
 }
+const searchbar = document.getElementById("searchbar");
+
+searchbar.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    search_item("search");
+  }
+});
 async function search_item(order1) {
- 
   const box1 = document.getElementById("products-container");
   const box2 = document.getElementById("search-data");
   const searchButton = document.getElementById("search-button");
   const cancelButton = document.getElementById("cancel-button");
+  
 
   if (order1 === "cancel") {
     box1.style.visibility = "visible";
     box2.style.visibility = "hidden";
     searchButton.hidden = false;
     cancelButton.hidden = true;
+    document.getElementById("searchbar").value = "";
   }
   if (order1 === "search") {
     box1.style.visibility = "hidden";
     box2.style.visibility = "visible";
     searchButton.hidden = true;
     cancelButton.hidden = false;
-    const searchContainer = document.getElementById("search-data");
-    
+    const searchbar = document.getElementById("searchbar");
+
+searchbar.addEventListener("keydown", function (event) {
+
+    if (event.key === "Enter") {
+        search_item("search");
+    }
+
+});
+    // const searchContainer = document.getElementById("search-data");
+
     const url = "https://dummyjson.com/products";
-    
-     let input = document.getElementById("searchbar").value;
+
+    let input = document.getElementById("searchbar").value;
     input = input.toLowerCase();
 
     console.log(input);
@@ -229,25 +254,25 @@ async function search_item(order1) {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-     
-     const data = await response.json();
+
+      const data = await response.json();
       console.log("fetched categories:", data);
       const regex = new RegExp(input, "i");
-   
+
       console.log("just abobve search producd");
 
       let searchProducts = data.products.filter(
         (product) =>
-          regex.test(product.title) || regex.test(product.description)
+          regex.test(product.title) || regex.test(product.description),
       );
-console.log(" below searchProducts" );
+      console.log(" below searchProducts");
 
       console.log(searchProducts);
-        const container = document.getElementById("search-data");
+      const container = document.getElementById("search-data");
 
-        container.innerHTML = searchProducts
-          .map(
-            (product) => `
+      container.innerHTML = searchProducts
+        .map(
+          (product) => `
           <div class="productCard">
           <h2>${product.title}</h2>
           <p>${product.description}</p>
@@ -258,11 +283,72 @@ console.log(" below searchProducts" );
           <p>Total Stock Remaining: ${product.stock}</p>
         </div>
       `,
-          )
-          .join("");
-     
+        )
+        .join("");
     } catch (error) {
       console.error("Fetch operation failed:", error.message);
     }
   }
+}
+
+async function ShowAll() {
+   const container = document.getElementById("products-container");
+   container.innerHTML = "<p>Loading products...</p>";
+  const url = "https://dummyjson.com/products";
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      currentProducts = data.products;
+      console.log( currentProducts);
+
+      // Render the category's products
+      if (currentProducts.length === 0) {
+        container.innerHTML = "<p>No products found in this category.</p>";
+        return;
+      }
+      renderProducts();
+      
+    } catch (error) {
+      console.error("Fetch operation failed:", error.message);
+      container.innerHTML = `<p>Error loading products: ${error.message}</p>`;
+    }
+
+ }
+console.log("above pagination function");
+ function pagination() {
+   console.log("1st line of pagination function");
+
+   const pageContainer = document.getElementById("paginated-list");
+
+   pageContainer.innerHTML = "";
+
+   let cardsHTML = "";
+   console.log(" current products" + currentProducts);
+   const totalPages = Math.ceil(currentProducts.length / 9);
+   console.log("total pages" + totalPages);
+   for (let i = 1; i <= totalPages; i++) {
+     cardsHTML += `
+            <div 
+                class="page-number"
+                onclick="showPage(${i})"
+            >
+                <h3>${i}</h3>
+            </div>
+        `;
+   }
+    
+   pageContainer.innerHTML = cardsHTML;
+}
+pagination();
+console.log("below pagination function");
+
+async function showPage(i) {
+  console.log("this is showpage :" + i);
+  currentPageNumber = i;
+  renderProducts();
 }

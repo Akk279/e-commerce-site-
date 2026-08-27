@@ -92,6 +92,20 @@ gap: 20px;
     justify-content: space-evenly;
     align-items: center;
 }
+
+
+#paginated-list {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+}
+.page-number{
+    cursor: pointer;
+    font-size: 24px;
+    border: 1px solid black;
+    padding: 10px;
+}
 @media (max-width:767px){
     
       #products-container{
