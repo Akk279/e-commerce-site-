@@ -106,7 +106,7 @@ async function getCategory() {
     console.log("fetched categories:", data);
 
     const container = document.getElementById("ProductCategory");
-    let cardsHTML = `<div class="ProductCategorychildren" onclick="ShowAll()" style="cursor: pointer;">
+    let cardsHTML = `<div class="ProductCategorychildren" onclick="setActiveCategory(this); ShowAll()" style="cursor: pointer;">
           <h3>Show All</h3>
       </div>`;
 
@@ -116,14 +116,13 @@ async function getCategory() {
 
       // Fixed: Single clean div with the onclick handler
       cardsHTML += `
-        <div class="ProductCategorychildren" onclick="getData('${categorySlug}')" style="cursor: pointer;">
+        <div class="ProductCategorychildren" onclick="setActiveCategory(this); getData('${categorySlug}')" style="cursor: pointer;">
           <h3>${categoryName}</h3>
         </div>
       `;
     });
 
     container.innerHTML = cardsHTML;
-
     // Optional: Load the first category automatically on initial page load
     if (data.length > 0) {
       ShowAll();
@@ -167,16 +166,25 @@ async function getData(category) {
 
 let currentProducts = [];
 let currentPageNumber = 1;
-const productsPerPage = 9;
+let productsPerPage;
+if (window.innerWidth > 1080) {
+ productsPerPage = 9;
+}
+else {
+   productsPerPage = 6;
+}
+
 function renderProducts() {
   const container = document.getElementById("products-container");
-   const start = (currentPageNumber - 1) * productsPerPage;
+  const start = (currentPageNumber - 1) * productsPerPage;
+  console.log("start " + start);
    const visibleProducts = currentProducts.slice(
      start,
      start + productsPerPage,
   );
-   document.getElementById("products-container").innerHTML = visibleProducts
-     .map(
+
+ 
+   container.innerHTML = visibleProducts.map(
        (product) => `
           <div class="productCard">
           <h2>${product.title}</h2>
@@ -189,7 +197,8 @@ function renderProducts() {
         </div>
       `,
      )
-     .join("");
+    .join("");
+  
 
   pagination();
 }
@@ -329,7 +338,7 @@ console.log("above pagination function");
 
    let cardsHTML = "";
    console.log(" current products" + currentProducts);
-   const totalPages = Math.ceil(currentProducts.length / 9);
+   const totalPages = Math.ceil(currentProducts.length / productsPerPage);
    console.log("total pages" + totalPages);
    for (let i = 1; i <= totalPages; i++) {
      cardsHTML += `
@@ -344,7 +353,7 @@ console.log("above pagination function");
     
    pageContainer.innerHTML = cardsHTML;
 }
-pagination();
+
 console.log("below pagination function");
 
 async function showPage(i) {
